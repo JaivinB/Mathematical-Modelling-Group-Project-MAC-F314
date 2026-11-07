@@ -2,7 +2,7 @@
 
 **FitzHugh–Nagumo model of neuronal firing and excitability**
 
-The [starter notebook](fhn_project.ipynb) introduces the equations, finds the resting state and compares a small nudge, a single spike and sustained firing. Each section explains the algorithm before its runnable Python cell.
+The [core notebook](fhn_project.ipynb) starts with the model equations and three voltage experiments. It then explains nullclines, phase portraits, local stability, the applied-current sweep, and sensitivity to the recovery parameter. Color-coded algorithm blocks introduce each set of commented Python cells.
 
 ## Run on a Mac
 
@@ -15,6 +15,6 @@ python -m pip install -r requirements.txt
 python -m jupyter lab fhn_project.ipynb
 ```
 
-Select the environment's Python 3 kernel and run the cells in order. SciPy integrates the model and Matplotlib draws the figures. The notebook includes the first run's outputs for reference.
+Select the environment's Python 3 kernel and run the cells in order. SciPy integrates the model and Matplotlib draws the figures. The notebook includes the executed results for reference.
 
-The next milestone is phase-plane and stability analysis. The optional PINN will train in Google Colab, and the report will compile in Overleaf.
+Set `EXPORT_FIGURES = True` in the final code cell to save report figures as PDF for Overleaf and EPS for submission. The optional PINN will use a separate notebook in Google Colab.
