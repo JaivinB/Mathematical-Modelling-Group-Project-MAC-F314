@@ -28,6 +28,21 @@ The variables and time are expressed in scaled model units.
 
 The [analysis notebook](fhn_project.ipynb) contains the derivations, simulations, and figures.
 
+## Final report and bonus results
+
+The [final Overleaf PDF](report/report.pdf) covers the model assumptions and equations, equilibrium and stability analysis, phase portraits, the current sweep, and recovery sensitivity. Its bonus section compares a physics-informed neural network (PINN) with SciPy least squares on the inverse problem of estimating the recovery parameter `a` from voltage readings alone.
+
+The [executed PINN notebook](fhn_pinn_ml.ipynb) includes the training, validation, and final test. With sparse, noisy synthetic observations, both fits recovered the true value `a = 0.700` within 1% and predicted the correct spike count on the held-out trajectory at `I = 0.90`.
+
+| Method | Estimated `a` | Relative parameter error | Held-out voltage RMSE |
+| --- | ---: | ---: | ---: |
+| PINN | 0.704093 | 0.58% | 0.015570 |
+| SciPy least squares | 0.701926 | 0.28% | 0.007343 |
+
+Least squares gave the smaller parameter and voltage errors in this synthetic experiment.
+
+The [LaTeX source](report/main.tex) includes the [bonus section](report/bonus.tex) and [references](report/references.bib). The [figure folder](report/figures) contains six figures in both PDF and EPS formats.
+
 ## AI acknowledgment
 
 ChatGPT assisted with topic planning and the design of the bonus experiment. OpenAI Codex assisted with drafting and organizing both notebooks, commenting the code, checking numerical results and notebook execution, drafting the LaTeX report, and verifying its compilation.

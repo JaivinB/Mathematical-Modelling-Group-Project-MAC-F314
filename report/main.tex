@@ -46,7 +46,7 @@ with the FitzHugh--Nagumo model\par}
 
 \subsection*{Abstract}
 
-We use the two-variable FitzHugh--Nagumo model to study how an excitable cell responds to a perturbation and to sustained current. We derive the equilibria and classify their local stability, then compare simulations of rest, a single spike, and repetitive firing. The equilibrium changes stability at two candidate Hopf currents, approximately \(0.331\) and \(1.419\) in model units. Near both crossings, the response depends on the initial state. At a fixed current of \(0.50\), raising the recovery parameter from \(0.06\) to \(0.10\) decreases the mean firing period from \(49.157\) to \(33.525\) model time units.
+The FitzHugh--Nagumo model reproduces rest, a single spike, and repeated firing. We derive two equilibrium stability crossings near \(I=0.331\) and \(I=1.419\), where simulations show that the initial state can affect firing. At \(I=0.50\), increasing the recovery rate from \(0.06\) to \(0.10\) shortens the mean period from \(49.157\) to \(33.525\) model time units. From sparse, noisy synthetic voltage, a physics-informed neural network recovered a hidden parameter within \(0.58\%\), compared with \(0.28\%\) for least squares.
 
 \section{Introduction and motivation}
 
@@ -264,11 +264,21 @@ With \(I=0.50\) and the same starting state, we changed only \(\varepsilon\). We
 
 Faster recovery reduced the average interval between spikes across the tested range. The mean period decreased by about \(32\%\) between the first and last settings. This comparison describes one current and three recovery settings.
 
+\input{bonus}
+
+\clearpage
+
 \section{Conclusion and limitations}
 
 The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew. The current sweep identified two stability crossings, and the refined runs showed that the initial state can matter near a crossing. At the tested current, increasing the recovery rate shortened the firing period.
 
-The variables are scaled, so comparing the curves to a particular neuron would require calibration against measured voltage, time, and current. The late-time simulations sample selected currents and initial states. A full description of periodic branches and their stability would require additional analysis. The accompanying Jupyter notebook regenerates the simulations and exports the figures in this report.
+The variables are scaled, so comparing the curves to a particular neuron would require calibration against measured voltage, time, and current. The late-time simulations sample selected currents and initial states. A full description of periodic branches and their stability would require additional analysis. The core Jupyter notebook regenerates the simulations and exports the core figures.
+
+In the bonus experiment, both methods recovered the true \(a\) within \(1\%\) from sparse, noisy voltage and transferred the estimate to a different current and starting state. Least squares had lower parameter and trajectory errors in this experiment, where the forward model was known. The comparison between the clean and noisy sets combines a change in sample density with added noise. Because the benchmark uses one synthetic model, one observation seed, and one network seed, it measures recovery under these controlled assumptions. Estimating additional parameters or comparing against a real recording would require further experiments.
+
+\subsection*{Reproducibility}
+
+The executed Colab notebook contains the training logs, fitted values, validation and final-test tables, and comparison plots. The run used PyTorch 2.14.1, SciPy 1.16.3, and Matplotlib 3.10.0. See the \href{https://github.com/Rigur-Calypso/Mathematical-Modelling-Group-Project-MAC-F314/blob/e78813a679367d4be962c1d8b4448c56e6846b50/fhn_pinn_ml.ipynb}{executed PINN notebook}.
 
 \begingroup
 \small
