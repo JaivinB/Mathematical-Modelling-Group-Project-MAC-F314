@@ -27,3 +27,7 @@ The variables and time are expressed in scaled model units.
 3. **Transitions and sensitivity.** Sweeping the current reveals two candidate Hopf points near `I = 0.331` and `I = 1.419`. At `I = 0.50`, increasing `ε` from `0.06` to `0.10` shortens the mean firing period from `49.157` to `33.525` model time units.
 
 The [analysis notebook](fhn_project.ipynb) contains the derivations, simulations, and figures.
+
+## AI acknowledgment
+
+ChatGPT assisted with topic planning and the design of the bonus experiment. OpenAI Codex assisted with drafting and organizing both notebooks, commenting the code, checking numerical results and notebook execution, drafting the LaTeX report, and verifying its compilation.
