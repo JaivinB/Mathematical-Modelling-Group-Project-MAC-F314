@@ -17,4 +17,10 @@ python -m jupyter lab fhn_project.ipynb
 
 Select the environment's Python 3 kernel and run the cells in order. SciPy integrates the model and Matplotlib draws the figures. The notebook includes the executed results for reference.
 
-Set `EXPORT_FIGURES = True` in the final code cell to save report figures as PDF for Overleaf and EPS for submission. The optional PINN will use a separate notebook in Google Colab.
+## LaTeX report
+
+The [editable report](report/main.tex) uses [BibTeX references](report/references.bib) and [four figures](report/figures). The [compiled PDF](report/report.pdf) contains the core analysis and numerical results.
+
+To compile in Overleaf, upload the contents of the report folder and select `main.tex` as the main document with pdfLaTeX. The report includes PDF copies of the figures. Keep the matching EPS files for submission.
+
+Set `EXPORT_FIGURES = True` in the final notebook cell to regenerate the figure pairs. The optional PINN uses a separate notebook in Google Colab.
