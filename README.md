@@ -1,26 +1,29 @@
 # Mathematical Modelling Group Project (MAC F314)
 
-**FitzHugh–Nagumo model of neuronal firing and excitability**
+## The problem
 
-The [core notebook](fhn_project.ipynb) starts with the model equations and three voltage experiments. It then explains nullclines, phase portraits, local stability, the applied-current sweep, and sensitivity to the recovery parameter. Color-coded algorithm blocks introduce each set of commented Python cells.
+How can the same neuron settle to rest after a small disturbance, produce one spike after a larger disturbance, or fire repeatedly under sustained current? We use the FitzHugh–Nagumo model to study how the applied current and the neuron's starting state determine which response occurs.
 
-## Run on a Mac
+## The FitzHugh–Nagumo model
 
-From the project folder, use Python 3.12.
+The model describes one excitable cell with two coupled differential equations.
 
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m jupyter lab fhn_project.ipynb
+```text
+dv/dt = v − v³/3 − w + I
+dw/dt = ε(v + a − bw)
 ```
 
-Select the environment's Python 3 kernel and run the cells in order. SciPy integrates the model and Matplotlib draws the figures. The notebook includes the executed results for reference.
+- `v` represents the membrane voltage, which changes rapidly during a spike.
+- `w` represents slower recovery processes. As recovery increases, the `−w` term reduces the voltage slope.
+- `I` is the applied current, held constant within each simulation.
+- `a` and `b` shape recovery, while `ε` scales its rate. We start with `a = 0.7`, `b = 0.8`, and `ε = 0.08`.
 
-## LaTeX report
+The variables and time are expressed in scaled model units.
 
-The [editable report](report/main.tex) uses [BibTeX references](report/references.bib) and [four figures](report/figures). The [compiled PDF](report/report.pdf) contains the core analysis and numerical results.
+## What we investigate
 
-To compile in Overleaf, upload the contents of the report folder and select `main.tex` as the main document with pdfLaTeX. The report includes PDF copies of the figures. Keep the matching EPS files for submission.
+1. **Rest and excitability.** At zero current, a small voltage nudge fades, while a larger nudge produces one spike before returning to the same equilibrium.
+2. **Repeated firing and stability.** At sustained current `I = 0.50`, the model fires repeatedly. We use phase portraits, nullclines, and the Jacobian to explain how this relates to the stability of the equilibrium.
+3. **Transitions and sensitivity.** Sweeping the current reveals two candidate Hopf points near `I = 0.331` and `I = 1.419`. At `I = 0.50`, increasing `ε` from `0.06` to `0.10` shortens the mean firing period from `49.157` to `33.525` model time units.
 
-Set `EXPORT_FIGURES = True` in the final notebook cell to regenerate the figure pairs. The optional PINN uses a separate notebook in Google Colab.
+The [analysis notebook](fhn_project.ipynb) contains the derivations, simulations, and figures.
