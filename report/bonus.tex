@@ -33,7 +33,7 @@ On a Colab CPU in double precision, we used 400 voltage-only steps, 1800 joint A
 
 The least-squares baseline integrates the FHN model for each trial \(a\) and minimizes squared voltage errors at the same observation times. Both fits start at \(a=0.50\) with the same allowed interval \([0.20,1.20]\).
 
-\subsection{Held-out results}
+\subsection{Held-out results from the original benchmark}
 
 For validation and testing, we used each fitted \(a\) in the same numerical ODE solver at the new current and initial state. This checks parameter transfer to another trajectory. The voltage error is the root mean square error (RMSE) against the corresponding clean reference. Relative parameter error is \(100|\hat a-a_{\mathrm{true}}|/|a_{\mathrm{true}}|\).
 
@@ -62,4 +62,60 @@ For validation and testing, we used each fitted \(a\) in the same numerical ODE 
   \label{fig:pinn-test}
 \end{figure}
 
-Both methods matched the single reference spike in the final test. On noisy validation data, voltage RMSE was \(0.011649\) for the PINN and \(0.005491\) for least squares.
+Both methods matched the single reference spike in the final test. On the clean validation trajectory, the fits from noisy training readings gave voltage RMSEs of \(0.011649\) for the PINN and \(0.005491\) for least squares.
+
+
+\clearpage
+
+\subsection{Controlled comparison of sampling and noise}
+\label{sec:controlled}
+
+The original benchmark changed the number of readings and the amount of noise together. We now vary these two factors separately on the same training trajectory. The dense grid uses 100 positive-time samples from \(0.4\) through \(40\), spaced by \(0.4\) model time units. The sparse grid keeps the second and fifth reading from each block of five dense readings, for a total of 40 samples. The known initial state at \(t=0\) is shared by all fits.
+
+For each noise seed \(2026,\dots,2030\), we draw independent Gaussian voltage errors with mean zero and standard deviation \(0.03\) on the dense grid. The sparse dataset uses the same perturbed readings at its selected times. Each density also has a clean control at the same times. This yields two clean datasets and ten noisy datasets. Related work has studied the sensitivity of FHN parameter estimation to observation noise with other neural architectures \cite{rudi2022}.
+
+Both methods use the same readings, bounds, and known initial state. The PINN architecture, loss, collocation grid, optimizer budget, and initialization are held fixed. Each fitted \(\hat a\) is scored by relative parameter error and by voltage RMSE on the final trajectory at \(I=0.90\). That trajectory is used only for scoring.
+
+\paragraph{How the comparisons isolate each factor.}
+For noise, subtract the clean error from the noisy error at the same sample count. For sampling, subtract the dense error from the sparse error using the same noise seed. Positive differences indicate an increase in error. We report medians and full ranges across the five noise realizations. The ranges describe the tested realizations.
+
+\begin{table}[H]
+  \centering
+  \caption{Controlled experiment results on the final test at \(I=0.90\). Noisy conditions show the median and full range in brackets. The two clean datasets contribute one fit per method.}
+  \label{tab:controlled-both}
+  \small
+  \input{pinn_controlled_results}
+\end{table}
+
+Both methods recovered \(a\) closely from clean readings. For the noisy datasets, least squares gave smaller parameter errors and lower held-out voltage RMSEs in all ten matched comparisons. At 100 readings, the median RMSE was \(0.002744\) for least squares and \(0.018354\) for the PINN. At 40 readings, the corresponding medians were \(0.002029\) and \(0.022869\). The least-squares fit solves the exact data-generating equations at each trial value of \(a\). The PINN estimates \(a\) while also learning two state curves and balancing its voltage and equation losses. This benchmark compares those two procedures under a known model and fixed training settings.
+
+\clearpage
+
+\subsection{Separate effects of noise and sample count}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{figures/pinn_controlled_comparison.pdf}
+  \caption{Parameter error and held-out voltage RMSE by observation condition. Each marker is one fit. The horizontal bars show group medians. All held-out trajectories use the same ODE solver with the fitted parameter.}
+  \label{fig:controlled-both}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Paired changes in held-out voltage RMSE. Each noisy contrast summarizes five differences as median [minimum, maximum]. Positive values mean error increased.}
+  \label{tab:controlled-paired}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Change & Least squares & PINN\\
+    \midrule
+    Add noise at 100 readings & \(+0.002744\) [0.001384, 0.006811] & \(+0.018283\) [0.007749, 0.022230]\\
+    Add noise at 40 readings & \(+0.002029\) [0.000996, 0.007552] & \(+0.022628\) [0.004908, 0.030079]\\
+    Reduce noisy readings to 40 & \(+0.000645\) [$-0.005139$, 0.004808] & \(+0.008018\) [$-0.008281$, 0.012244]\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+At a fixed set of observation times, adding noise raised the test error in every trial for both methods. With noisy readings, reducing the sample count increased the error in three of five least-squares pairs and four of five PINN pairs. The effect of the sample count therefore depended on which readings were retained and on their noise values. For example, least squares had a lower group median with 40 noisy readings even though its median \emph{paired change} was positive. The paired change is calculated by subtracting errors seed by seed before taking the median.
+
+These comparisons summarize five realizations of one noise level. They show performance for the specified FHN model, observation times, and fixed initialization. Other noise levels, observation patterns, or initializations would require separate trials.

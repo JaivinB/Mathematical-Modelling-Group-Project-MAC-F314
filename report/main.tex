@@ -38,7 +38,7 @@
 {\color{reportink}\LARGE\bfseries Neuronal firing and excitability\\[0.15em]
 with the FitzHugh--Nagumo model\par}
 \vspace{0.35em}
-{\large Equilibria, stability, numerical simulation, and sensitivity\par}
+{\large Equilibria, bifurcations, numerical simulation, and sensitivity\par}
 % Add the group members' names and roll numbers here for submission.
 
 \vspace{0.7em}
@@ -46,18 +46,18 @@ with the FitzHugh--Nagumo model\par}
 
 \subsection*{Abstract}
 
-The FitzHugh--Nagumo model reproduces rest, a single spike, and repeated firing. We derive two equilibrium stability crossings near \(I=0.331\) and \(I=1.419\), where simulations show that the initial state can affect firing. At \(I=0.50\), increasing the recovery rate from \(0.06\) to \(0.10\) shortens the mean period from \(49.157\) to \(33.525\) model time units. From sparse, noisy synthetic voltage, a physics-informed neural network recovered a hidden parameter within \(0.58\%\), compared with \(0.28\%\) for least squares.
+We use the FitzHugh--Nagumo model to reproduce rest, a single spike, and repeated firing. A positive first Lyapunov coefficient classifies two current crossings, near \(I=0.331\) and \(I=1.419\), as subcritical Hopf bifurcations. At \(I=0.50\), raising the recovery rate from \(0.06\) to \(0.10\) shortens the period from \(49.157\) to \(33.525\) model time units. In the controlled inverse study, least squares gave lower held-out voltage error than the PINN in all ten noisy comparisons.
 
 \section{Introduction and motivation}
 
-An excitable neuron can respond to a brief electrical disturbance with a rapid voltage spike and then recover. Under a suitable sustained current, it can fire repeatedly. The FitzHugh--Nagumo model represents these responses using a fast voltage variable and a slower recovery variable. Its two-dimensional form allows us to draw the possible states, follow their trajectories, and relate the graphs to equilibrium and stability calculations \cite{fitzhugh1961,nagumo1962}.
+A brief electrical disturbance can produce a voltage spike followed by recovery. A suitable sustained current can produce repeated firing. The FitzHugh--Nagumo model represents both responses with fast voltage and slower recovery variables. Its two-dimensional phase plane lets us relate simulated trajectories to equilibrium and stability calculations \cite{fitzhugh1961,nagumo1962}.
 
 \subsection*{Objectives}
 
 \begin{enumerate}
   \item Derive the nullclines and equilibrium equation, and determine local stability from the Jacobian.
   \item Use controlled simulations to compare return to rest, a single spike, and repetitive firing.
-  \item Locate current values where the equilibrium changes stability and measure how the recovery parameter affects the interval between spikes.
+  \item Locate and classify the bifurcations as current varies, and measure how the recovery parameter affects the interval between spikes.
 \end{enumerate}
 
 \section{Assumptions and mathematical formulation}
@@ -69,7 +69,7 @@ We model one spatially uniform excitable cell. The state and time are scaled, an
   \dot w &= \varepsilon(v+a-bw). \label{eq:recovery}
 \end{align}
 
-Here \(v\) is scaled voltage, \(w\) is the recovery state, \(I\) is the applied current, and a dot denotes differentiation with respect to time. The term \(-w\) lowers the voltage slope as recovery increases. In the second equation, higher \(v\) raises the recovery slope. The small factor \(\varepsilon\) makes recovery evolve more slowly on the time scale of a spike.
+Here \(v\) is scaled voltage, \(w\) is recovery, \(I\) is applied current, and a dot denotes a time derivative. Higher recovery lowers the voltage slope through \(-w\), while higher voltage raises the recovery slope. The small factor \(\varepsilon\) slows recovery on the time scale of a spike.
 
 \clearpage
 
@@ -112,7 +112,9 @@ Its trace and determinant are
 \end{equation}
 The eigenvalues solve \(\lambda^2-T\lambda+D=0\). Negative real parts imply local asymptotic stability. A positive real part implies instability. With our parameters, \(D=\varepsilon(1-b+bv_*^2)>0\), so away from \(T=0\) the sign of the trace determines whether the equilibrium is stable or unstable. The Jacobian predicts the initial response to a small nudge. A larger nudge can explore regions of the phase plane where the linear approximation is inaccurate.
 
-\subsection{Candidate Hopf points}
+\clearpage
+
+\subsection{Locating and classifying the Hopf bifurcations}
 
 When \(T=0\) and \(D>0\), the eigenvalues are purely imaginary. Solving \(T=0\) and substituting into \eqref{eq:nullclines} gives
 \begin{equation}
@@ -125,7 +127,45 @@ At both candidates \(D=0.075904\). Differentiating \eqref{eq:equilibrium} with r
 \begin{equation}
   \frac{dT}{dI}=-\frac{2bv_*}{bv_*^2+1-b}.
 \end{equation}
-The derivative is about \(+1.631\) at the lower candidate and \(-1.631\) at the upper candidate. The eigenvalue real parts therefore cross zero at a nonzero rate. We use \emph{candidate Hopf point} because the nonlinear coefficient needed to classify the local periodic-orbit bifurcation was left unevaluated \cite{kuznetsov2006}.
+The nonzero slopes show that the eigenvalue pair crosses the imaginary axis. To classify the bifurcations we also need the effect of the nonlinear terms on the amplitude of small oscillations \cite{kuznetsov2006}.
+
+\subsubsection*{First Lyapunov coefficient}
+
+At either crossing, set \(x=v-v_H\), \(y=w-w_H\), \(p=\varepsilon b\), and \(\omega=\sqrt{\varepsilon-p^2}\). Subtract the equilibrium equations and expand the cubic to obtain
+\[
+  \dot x=px-y+F(x),\qquad
+  \dot y=\varepsilon x-py,\qquad
+  F(x)=-v_Hx^2-\frac{x^3}{3}.
+\]
+Use \(X=x\), \(Y=(y-px)/\omega\), and \(\tau=\omega t\) to put the linear part into unit-frequency rotation form. With primes denoting \(\tau\) derivatives,
+\[
+  X'=-Y+f(X),\qquad Y'=X+g(X),\qquad
+  f=F/\omega,\quad g=-pF/\omega^2.
+\]
+The planar coefficient formula simplifies because \(f\) and \(g\) depend only on \(X\). At the origin, \(f_{XXX}=-2/\omega\), \(f_{XX}=-2v_H/\omega\), and \(g_{XX}=2pv_H/\omega^2\). Substitution gives
+\begin{equation}
+  \ell_1=\frac{f_{XXX}-f_{XX}g_{XX}}{16}
+        =-\frac{1}{8\omega}+\frac{pv_H^2}{4\omega^3}
+        =\frac{\varepsilon(2b-1-\varepsilon b^2)}{8\omega^3}.
+  \label{eq:hopf-coefficient}
+\end{equation}
+With the baseline parameters, \(2b-1-\varepsilon b^2=0.5488\). The coefficient is positive at both crossings in these coordinates.
+
+\begin{table}[H]
+  \centering
+  \caption{Hopf classification at \(a=0.7\), \(b=0.8\), and \(\varepsilon=0.08\). The determinant is \(0.075904\) at both crossings.}
+  \label{tab:hopf}
+  \begin{tabular}{@{}rrrrl@{}}
+    \toprule
+    \(I_H\) & \(v_H\) & \(dT/dI\) & \(\ell_1\) & Side with small unstable orbit\\
+    \midrule
+    0.331281 & \(-0.967471\) & \(+1.631486\) & \(+0.262432\) & \(I<I_H\), nearby\\
+    1.418719 & \(+0.967471\) & \(-1.631486\) & \(+0.262432\) & \(I>I_H\), nearby\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+In the local amplitude equation \(r'=\mu r+\ell_1r^3+\cdots\), \(\mu\) has the sign of the trace near the crossing. For \(\ell_1>0\), a small nonzero radius exists for \(\mu<0\) and repels nearby trajectories. Thus both crossings are \emph{subcritical Hopf bifurcations}. The calculation determines the stability and location of the small orbit close to each crossing. The large firing loops are investigated separately in the simulations. Subcritical Hopf behaviour in the FitzHugh--Nagumo equations is also discussed by Izhikevich \cite{izhikevich2000}.
 
 \clearpage
 
@@ -202,7 +242,7 @@ The numerical perturbation checks agree with the eigenvalues at all three curren
 
 \subsection{Current sweep and behaviour near the crossings}
 
-We varied \(I\) from 0 to 1.75 in increments of 0.025, using the same initial state as the small-nudge experiment in Table~\ref{tab:runs}. For each run, we recorded the minimum and maximum voltage over \([300,600]\), sampled every \(0.2\) time units. Figure~\ref{fig:sweep} compares these extrema with the equilibrium voltage and the largest eigenvalue real part. The dotted lines mark the two analytically located crossings, \(I\approx0.331281\) and \(1.418719\).
+We varied \(I\) from 0 to 1.75 in increments of 0.025, using the same initial state as the small-nudge experiment in Table~\ref{tab:runs}. For each run, we recorded the minimum and maximum voltage over \([300,600]\), sampled every \(0.2\) time units. Figure~\ref{fig:sweep} compares these extrema with the equilibrium voltage and the largest eigenvalue real part. The dotted lines mark the two analytically classified subcritical Hopf bifurcations, \(I\approx0.331281\) and \(1.418719\).
 
 \begin{figure}[H]
   \centering
@@ -211,7 +251,7 @@ We varied \(I\) from 0 to 1.75 in increments of 0.025, using the same initial st
   \label{fig:sweep}
 \end{figure}
 
-We also simulated currents \(0.004\) below and above each candidate. Each run started at the corresponding equilibrium recovery value, with voltage nudged toward the middle of the voltage range by either \(0.01\) or \(0.80\). Table~\ref{tab:refined} shows the resulting voltage span, maximum minus minimum, on \([1700,2000]\).
+We also simulated currents \(0.004\) below and above each bifurcation. Each run started at the corresponding equilibrium recovery value, with voltage nudged toward the middle of the voltage range by either \(0.01\) or \(0.80\). Table~\ref{tab:refined} shows the resulting voltage span, maximum minus minimum, on \([1700,2000]\).
 
 \begin{table}[H]
   \centering
@@ -270,15 +310,15 @@ Faster recovery reduced the average interval between spikes across the tested ra
 
 \section{Conclusion and limitations}
 
-The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew. The current sweep identified two stability crossings, and the refined runs showed that the initial state can matter near a crossing. At the tested current, increasing the recovery rate shortened the firing period.
+The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew. The first Lyapunov coefficient classified both stability crossings as subcritical Hopf bifurcations. The refined runs showed that the initial state can matter near either crossing. At the tested current, increasing the recovery rate shortened the firing period.
 
 The variables are scaled, so comparing the curves to a particular neuron would require calibration against measured voltage, time, and current. The late-time simulations sample selected currents and initial states. A full description of periodic branches and their stability would require additional analysis. The core Jupyter notebook regenerates the simulations and exports the core figures.
 
-In the bonus experiment, both methods recovered the true \(a\) within \(1\%\) from sparse, noisy voltage and transferred the estimate to a different current and starting state. Least squares had lower parameter and trajectory errors in this experiment, where the forward model was known. The comparison between the clean and noisy sets combines a change in sample density with added noise. Because the benchmark uses one synthetic model, one observation seed, and one network seed, it measures recovery under these controlled assumptions. Estimating additional parameters or comparing against a real recording would require further experiments.
+In the controlled inverse study, noise increased the held-out error for both methods at both sample counts. The effect of reducing the sample count varied across paired noise draws. Least squares had lower error than the PINN in all ten noisy comparisons under the known FHN equations. The study uses one noise level, five noise draws, and a fixed network initialization. Generalization across initializations, additional unknown parameters, or biological recordings requires separate experiments.
 
 \subsection*{Reproducibility}
 
-The executed Colab notebook contains the training logs, fitted values, validation and final-test tables, and comparison plots. The run used PyTorch 2.14.1, SciPy 1.16.3, and Matplotlib 3.10.0. See the \href{https://github.com/Rigur-Calypso/Mathematical-Modelling-Group-Project-MAC-F314/blob/e78813a679367d4be962c1d8b4448c56e6846b50/fhn_pinn_ml.ipynb}{executed PINN notebook}.
+The core notebook derives and evaluates \eqref{eq:hopf-coefficient} and regenerates the current-sweep figure. The executed bonus notebook (\texttt{fhn\_pinn\_ml.ipynb}) contains both benchmarks. The controlled Colab CPU run used PyTorch 2.14.1, SymPy 1.14.0, SciPy 1.16.3, and Matplotlib 3.10.0. Step~12 uses observation seeds 2026--2030 and network seed 7. Its export contains all 24 rows in \texttt{pinn\_controlled\_trials.csv}, the summary table, and the figure in PDF and EPS.
 
 \begingroup
 \small

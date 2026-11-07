@@ -24,15 +24,15 @@ The variables and time are expressed in scaled model units.
 
 1. **Rest and excitability.** At zero current, a small voltage nudge fades, while a larger nudge produces one spike before returning to the same equilibrium.
 2. **Repeated firing and stability.** At sustained current `I = 0.50`, the model fires repeatedly. We use phase portraits, nullclines, and the Jacobian to explain how this relates to the stability of the equilibrium.
-3. **Transitions and sensitivity.** Sweeping the current reveals two candidate Hopf points near `I = 0.331` and `I = 1.419`. At `I = 0.50`, increasing `ε` from `0.06` to `0.10` shortens the mean firing period from `49.157` to `33.525` model time units.
+3. **Transitions and sensitivity.** Two subcritical Hopf bifurcations occur near `I = 0.331281` and `I = 1.418719`. The first Lyapunov coefficient is positive at both crossings, so the small periodic orbit near each crossing is unstable and lies on the locally stable side of the equilibrium. At `I = 0.50`, increasing `ε` from `0.06` to `0.10` shortens the mean firing period from `49.157` to `33.525` model time units.
 
 The [analysis notebook](fhn_project.ipynb) contains the derivations, simulations, and figures.
 
 ## Final report and bonus results
 
-The [final Overleaf PDF](report/report.pdf) covers the model assumptions and equations, equilibrium and stability analysis, phase portraits, the current sweep, and recovery sensitivity. Its bonus section compares a physics-informed neural network (PINN) with SciPy least squares on the inverse problem of estimating the recovery parameter `a` from voltage readings alone.
+The [compiled report](report/report.pdf) covers the model assumptions and equations, equilibrium and stability analysis, phase portraits, the current sweep, and recovery sensitivity. It derives the first Lyapunov coefficient in unit-frequency coordinates and explains how its sign classifies both bifurcations. Its bonus section compares a physics-informed neural network (PINN) with SciPy least squares on the inverse problem of estimating the recovery parameter `a` from voltage readings alone.
 
-The [executed PINN notebook](fhn_pinn_ml.ipynb) includes the training, validation, and final test. With sparse, noisy synthetic observations, both fits recovered the true value `a = 0.700` within 1% and predicted the correct spike count on the held-out trajectory at `I = 0.90`.
+The [PINN notebook](fhn_pinn_ml.ipynb) contains the executed original benchmark and controlled follow-up. With sparse, noisy synthetic observations, both fits recovered the true value `a = 0.700` within 1% and predicted the correct spike count on the held-out trajectory at `I = 0.90`.
 
 | Method | Estimated `a` | Relative parameter error | Held-out voltage RMSE |
 | --- | ---: | ---: | ---: |
@@ -41,7 +41,18 @@ The [executed PINN notebook](fhn_pinn_ml.ipynb) includes the training, validatio
 
 Least squares gave the smaller parameter and voltage errors in this synthetic experiment.
 
-The [LaTeX source](report/main.tex) includes the [bonus section](report/bonus.tex) and [references](report/references.bib). The [figure folder](report/figures) contains six figures in both PDF and EPS formats.
+### Controlled comparison of noise and sample count
+
+The original comparison changed noise and sample count together. Step 12 uses four conditions: 100 clean readings, 40 clean readings, 100 noisy readings, and 40 noisy readings. Within each density, clean and noisy fits use the same observation times. Within each of five noise seeds, the sparse readings are copied directly from the corresponding dense readings. This lets us isolate each factor in paired comparisons.
+
+| Noisy training readings | Median PINN voltage RMSE | Median least-squares voltage RMSE |
+| --- | ---: | ---: |
+| 100 | 0.018354 | 0.002744 |
+| 40 | 0.022869 | 0.002029 |
+
+Least squares gave lower parameter and held-out voltage errors in **all 10 noisy comparisons**. Noise increased test error for both methods at both sample counts in every matched trial. Reducing the noisy readings from 100 to 40 increased RMSE in four of five PINN pairs and three of five least-squares pairs. The result applies to this synthetic benchmark with known equations and a fixed network initialization.
+
+The [trial CSV](report/pinn_controlled_trials.csv) contains all 24 results. The [LaTeX source](report/main.tex) includes the [bonus analysis](report/bonus.tex), [result table](report/pinn_controlled_results.tex), and [references](report/references.bib). The [figure folder](report/figures) contains seven figures in PDF and EPS.
 
 ## AI acknowledgment
 

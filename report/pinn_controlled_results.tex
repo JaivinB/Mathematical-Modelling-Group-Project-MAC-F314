@@ -1,0 +1,14 @@
+\begin{tabular}{@{}llrll@{}}
+\toprule
+Condition & Method & \(n\) & Rel.\ error (\%) & Test voltage RMSE \\
+\midrule
+Dense clean & Least squares & 1 & 3.45401e-08 & 9.96392e-10 \\
+Dense clean & PINN & 1 & 0.00267977 & 7.16413e-05 \\
+Sparse clean & Least squares & 1 & 3.2548e-08 & 9.72764e-10 \\
+Sparse clean & PINN & 1 & 0.00902442 & 0.000241276 \\
+Dense noisy & Least squares & 5 & 0.102722 [0.0517677, 0.255215] & 0.00274436 [0.00138351, 0.00681144] \\
+Dense noisy & PINN & 5 & 0.689782 [0.293121, 0.839048] & 0.0183542 [0.0078211, 0.0223022] \\
+Sparse noisy & Least squares & 5 & 0.0759166 [0.0372602, 0.281985] & 0.00202857 [0.000995885, 0.00755241] \\
+Sparse noisy & PINN & 5 & 0.860525 [0.192364, 1.14325] & 0.0228695 [0.00514913, 0.0303203] \\
+\bottomrule
+\end{tabular}
