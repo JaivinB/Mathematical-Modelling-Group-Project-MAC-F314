@@ -127,10 +127,10 @@ Its trace and determinant are
 \end{equation}
 The eigenvalues solve \(\lambda^2-T\lambda+D=0\). Negative real parts imply local asymptotic stability. A positive real part implies instability. With our parameters, \(D=\varepsilon(1-b+bv_*^2)>0\), so away from \(T=0\) the sign of the trace determines whether the equilibrium is stable or unstable. The Jacobian predicts the initial response to a small nudge. A larger nudge can explore regions of the phase plane where the linear approximation is inaccurate.
 
-\subsection{A Lyapunov certificate for the resting state}
+\subsection{A numerically checked region around the resting state}
 \label{sec:lyapunov}
 
-The Jacobian establishes that \emph{sufficiently small} disturbances decay, without saying how small. A quadratic Lyapunov function makes the statement quantitative. At the zero-current equilibrium $A=J(v_*)$ is Hurwitz, so the Lyapunov matrix equation $A^{\mathsf{T}}P+PA=-Q$ with $Q=\mathbb{I}$ has a unique positive-definite solution,
+The Jacobian establishes that \emph{sufficiently small} disturbances decay, without saying how small. A quadratic Lyapunov function lets us attach a number to it. At the zero-current equilibrium $A=J(v_*)$ is Hurwitz, so the Lyapunov matrix equation $A^{\mathsf{T}}P+PA=-Q$ with $Q=\mathbb{I}$ has a unique positive-definite solution,
 \begin{equation}
   P=\begin{pmatrix}1.091492 & -0.266174\\ -0.266174 & 11.971474\end{pmatrix},
   \qquad \lambda(P)=\{1.08498,\;11.97798\}.
@@ -141,14 +141,14 @@ Write $z=(v-v_*,\,w-w_*)^{\mathsf{T}}$ and $V(z)=z^{\mathsf{T}}Pz$. Differentiat
   \dot V=-\lVert z\rVert^2+2\,(Pz)_1\Bigl(-v_*z_1^2-\tfrac{z_1^3}{3}\Bigr).
   \label{eq:Vdot}
 \end{equation}
-A sublevel set $\{V\le c\}$ on which $\dot V<0$ away from the origin is forward invariant and therefore contained in the basin of attraction. We search outward along rays for the level at which $\dot V$ first reaches zero, then step back to a level that can be checked directly. Sampling $\dot V$ at $4\times10^5$ points on the boundary of
+If $\dot V$ were negative on the whole of a sublevel set $\{V\le c\}$ away from the origin, that set would be forward invariant and contained in the basin of attraction. We do not establish that analytically here. Instead we search outward along rays for the level at which $\dot V$ first reaches zero, step back to a level below it, and sample. On
 \begin{equation}
   \Omega=\{z:V(z)\le 0.2059\},
   \label{eq:lyapset}
 \end{equation}
-and on $400$ interior level sets, the largest value found is $-4.05\times10^{-6}$, so $\dot V<0$ throughout $\Omega$ away from the origin. Every trajectory starting in $\Omega$ therefore returns to rest. Along the voltage axis $\Omega$ reaches a displacement of $0.43433$. The $+0.05$ displacement used in Section~\ref{sec:runs} has $V=0.002729$ and so lies well inside $\Omega$: its decay follows from \eqref{eq:Vdot} rather than from the simulation. Section~\ref{sec:threshold} measures the threshold as $0.5555$, so $\Omega$ reaches $78.2\%$ of it along that axis.
+evaluating $\dot V$ at $4\times10^5$ points of the boundary and on $400$ interior level sets, the largest value found is $-4.05\times10^{-6}$. We therefore report $\Omega$ as a \emph{numerically checked region}: at every point sampled, $\dot V$ is negative. Along the voltage axis $\Omega$ reaches a displacement of $0.43433$, and Section~\ref{sec:threshold} measures the threshold as $0.5555$, so $\Omega$ reaches $78.2\%$ of it along that axis. The $+0.05$ displacement used in Section~\ref{sec:runs} has $V=0.002729$, well inside $\Omega$.
 
-Two caveats are worth stating. The level in \eqref{eq:lyapset} is obtained by sampling, not by a closed-form bound, so it is a numerical estimate of the largest certified level rather than a proof that no larger one exists; the margin $-4.05\times10^{-6}$ is small, and a finer search could shave it. And $\Omega$ is an ellipse, while the true basin boundary is curved, so the shortfall against $0.5555$ measures the cost of describing a curved region by a quadratic form, not a gap in the dynamics.
+The limits of this are worth stating precisely. A grid establishes the sign of $\dot V$ at the points sampled; it does not establish it between them, so we do not claim that $\dot V<0$ everywhere in $\Omega$, nor that every trajectory starting in $\Omega$ returns to rest. The margin $-4.05\times10^{-6}$ is small, and the level is a numerical estimate rather than a proof that no larger one works. Converting this into a guarantee needs a bound on $\dot V$ between sample points --- a Lipschitz estimate on $\dot V$ over $\Omega$ combined with the sample spacing would do it --- and that is the natural next step. Separately, $\Omega$ is an ellipse while the true basin boundary is curved, so the shortfall against $0.5555$ measures the cost of describing a curved region by a quadratic form, not a gap in the dynamics.
 
 
 \clearpage
@@ -268,7 +268,7 @@ The two zero-current runs differ only in their initial voltage, so excitability 
   \end{tabular}
 \end{table}
 
-Table~\ref{tab:threshold} reports the threshold measured at $I=0$, with the recovery variable held at its resting value $w_*$ and a peak above $v=1$ taken as the spike criterion. Across the final bisection interval a displacement of $0.002$ separates a peak of $-0.3341$ from one of $+1.5887$, so peak voltage changes sharply over a narrow band of initial conditions. The located threshold sits $0.1424$ voltage units to the \emph{right} of the middle branch of the cubic nullcline at $w=w_*$, which lies at $-0.7863$. The middle branch is the $\varepsilon\to0$ description of the dividing set; at $\varepsilon=0.08$ the measured threshold and that branch differ by a resolvable amount, which is consistent with the scaling evidence in Section~\ref{sec:scaling}. Bisection locates where the spike criterion changes value; it does not by itself establish that the underlying response is discontinuous, nor identify the dividing set.
+Table~\ref{tab:threshold} reports the threshold measured at $I=0$, with the recovery variable held at its resting value $w_*$ and a peak above $v=1$ taken as the spike criterion. At two test displacements, $0.001$ below and $0.001$ above the estimated threshold, the peak voltage is $-0.3341$ and $+1.5887$ respectively, so peak voltage changes sharply over a narrow band of initial conditions. The located threshold sits $0.1424$ voltage units to the \emph{right} of the middle branch of the cubic nullcline at $w=w_*$, which lies at $-0.7863$. The middle branch is the $\varepsilon\to0$ description of the dividing set; at $\varepsilon=0.08$ the measured threshold and that branch differ by a resolvable amount, which is consistent with the scaling evidence in Section~\ref{sec:scaling}. Bisection locates where the spike criterion changes value; it does not by itself establish that the underlying response is discontinuous, nor identify the dividing set.
 
 
 \clearpage
@@ -406,7 +406,7 @@ The two tables give slightly different periods at \(\varepsilon=0.08\): \(39.475
 
 \section{Conclusion and limitations}
 
-The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew, and a Lyapunov function built from \eqref{eq:lyapP} turned the decay of the small disturbance into a quantitative statement, giving return to rest for voltage displacements up to \(0.43433\) against a measured threshold of \(0.5555\). The first Lyapunov coefficient classified both stability crossings as subcritical Hopf bifurcations. The refined runs showed that the initial state can matter near either crossing. At the tested current, increasing the recovery rate shortened the firing period; widening that sweep gave a fitted exponent in \(T\propto\varepsilon^{-\alpha}\) of \(0.750\) over the tested range and \(0.909\) over the smallest decade, consistent with the slow--fast prediction \(T\sim C/\varepsilon\) holding asymptotically rather than at these parameters.
+The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew, and a Lyapunov function built from \eqref{eq:lyapP} attached a number to the decay of the small disturbance, giving a numerically checked region that reaches voltage displacements of \(0.43433\) against a measured threshold of \(0.5555\). The first Lyapunov coefficient classified both stability crossings as subcritical Hopf bifurcations. The refined runs showed that the initial state can matter near either crossing. At the tested current, increasing the recovery rate shortened the firing period; widening that sweep gave a fitted exponent in \(T\propto\varepsilon^{-\alpha}\) of \(0.750\) over the tested range and \(0.909\) over the smallest decade, consistent with the slow--fast prediction \(T\sim C/\varepsilon\) holding asymptotically rather than at these parameters.
 
 The variables are scaled, so comparing the curves to a particular neuron would require calibration against measured voltage, time, and current. The late-time simulations sample selected currents and initial states. A full description of periodic branches and their stability would require additional analysis. The core Jupyter notebook regenerates the simulations and exports the core figures.
 
@@ -414,7 +414,7 @@ In the controlled inverse study, noise increased the held-out error for both met
 
 \subsection*{Reproducibility}
 
-The core notebook derives and evaluates \eqref{eq:hopf-coefficient}, regenerates the current-sweep figure, and reproduces the threshold of Table~\ref{tab:threshold}, the Lyapunov analysis of Section~\ref{sec:lyapunov} and the scaling table of Table~\ref{tab:scaling} in its sections 11--13. The executed bonus notebook (\texttt{fhn\_pinn\_ml.ipynb}) contains both benchmarks. The controlled Colab CPU run used PyTorch 2.14.1, SymPy 1.14.0, SciPy 1.16.3, and Matplotlib 3.10.0. Step~12 uses observation seeds 2026--2030 and network seed 7. Its export contains all 24 rows in \texttt{pinn\_controlled\_trials.csv}, the summary table, and the figure in PDF and EPS.
+The core notebook derives and evaluates \eqref{eq:hopf-coefficient}, regenerates the current-sweep figure, and reproduces the threshold of Table~\ref{tab:threshold}, the numerically checked region of Section~\ref{sec:lyapunov} and the scaling table of Table~\ref{tab:scaling} in its sections 11--13. The executed bonus notebook (\texttt{fhn\_pinn\_ml.ipynb}) contains both benchmarks. The controlled Colab CPU run used PyTorch 2.14.1, SymPy 1.14.0, SciPy 1.16.3, and Matplotlib 3.10.0. Step~12 uses observation seeds 2026--2030 and network seed 7. Its export contains all 24 rows in \texttt{pinn\_controlled\_trials.csv}, the summary table, and the figure in PDF and EPS.
 
 \begingroup
 \footnotesize

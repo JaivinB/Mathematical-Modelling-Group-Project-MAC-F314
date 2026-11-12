@@ -26,14 +26,14 @@ The core simulations use known parameters to predict voltage. Here we reverse th
 
 We generated clean reference trajectories on \([0,40]\) at intervals of \(0.10\), using DOP853 with relative and absolute tolerances of \(10^{-11}\) and \(10^{-13}\). For the clean training set, we kept every fourth voltage sample, giving 101 observations. For the sparse, noisy set, we chose one positive-time sample per block of ten and added Gaussian noise with standard deviation \(0.03\), giving 40 observations. The two sets sample the same training trajectory.
 
-Training used \(I=0.50\) and \((v_0,w_0)=(-1.15,-0.62)\). Validation used \(I=0.65\) and \((-1.00,-0.55)\). The final test used \(I=0.90\) and \((-1.20,-0.70)\). Only training observations entered either fit.
-
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.83\linewidth]{figures/pinn_training_observations.pdf}
+  \includegraphics[width=0.70\linewidth]{figures/pinn_training_observations.pdf}
   \caption{The two training datasets. Dots are the supplied observations and the gray curve is the clean numerical reference.}
   \label{fig:pinn-data}
 \end{figure}
+
+Training used \(I=0.50\) and \((v_0,w_0)=(-1.15,-0.62)\). Validation used \(I=0.65\) and \((-1.00,-0.55)\). The final test used \(I=0.90\) and \((-1.20,-0.70)\). Only training observations entered either fit.
 
 \clearpage
 
