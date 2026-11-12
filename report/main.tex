@@ -7,6 +7,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{enumitem}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage{graphicx,float,caption}
 \usepackage{xcolor}
 \usepackage{fancyhdr}
@@ -33,15 +34,14 @@
 \renewcommand{\headrulewidth}{0.4pt}
 
 % ---------------------------------------------------------------------------
-%  GROUP MEMBERS --- FILL IN BEFORE SUBMITTING.  Edit only here; the title
-%  block and the contributions table both read from these macros.
+%  GROUP MEMBERS.  Edit only here; the title block reads from these macros.
 % ---------------------------------------------------------------------------
-\newcommand{\memberA}{Name 1}   \newcommand{\idA}{20XXA7PS0000G}
-\newcommand{\memberB}{Name 2}   \newcommand{\idB}{20XXA7PS0000G}
-\newcommand{\memberC}{Name 3}   \newcommand{\idC}{20XXA7PS0000G}
-\newcommand{\memberD}{Name 4}   \newcommand{\idD}{20XXA7PS0000G}
-\newcommand{\memberE}{Name 5}   \newcommand{\idE}{20XXA7PS0000G}
-\newcommand{\memberF}{Name 6}   \newcommand{\idF}{20XXA7PS0000G}
+\newcommand{\memberA}{Bhagyesh Kamal}
+\newcommand{\memberB}{Jaivin Bengani}
+\newcommand{\memberC}{Purunjay Karwa}
+\newcommand{\memberD}{Arnav Kulshreshtha}
+\newcommand{\memberE}{Soham Agrawal}
+\newcommand{\memberF}{Samar Nayak}
 
 \begin{document}
 
@@ -54,8 +54,8 @@ with the FitzHugh--Nagumo model\par}
 \vspace{0.5em}
 {\small
 \begin{tabular}{@{}lll@{}}
-\memberA\ \textcolor{reportink}{(\idA)} & \memberC\ \textcolor{reportink}{(\idC)} & \memberE\ \textcolor{reportink}{(\idE)}\\
-\memberB\ \textcolor{reportink}{(\idB)} & \memberD\ \textcolor{reportink}{(\idD)} & \memberF\ \textcolor{reportink}{(\idF)}\\
+\memberA & \memberC & \memberE\\
+\memberB & \memberD & \memberF\\
 \end{tabular}\par}
 
 \vspace{0.7em}
@@ -87,8 +87,6 @@ We model one spatially uniform excitable cell. The state and time are scaled, an
 \end{align}
 
 Here \(v\) is scaled voltage, \(w\) is recovery, \(I\) is applied current, and a dot denotes a time derivative. Higher recovery lowers the voltage slope through \(-w\), while higher voltage raises the recovery slope. The small factor \(\varepsilon\) slows recovery on the time scale of a spike.
-
-\clearpage
 
 \section{Mathematical analysis}
 
@@ -143,11 +141,14 @@ Write $z=(v-v_*,\,w-w_*)^{\mathsf{T}}$ and $V(z)=z^{\mathsf{T}}Pz$. Differentiat
   \dot V=-\lVert z\rVert^2+2\,(Pz)_1\Bigl(-v_*z_1^2-\tfrac{z_1^3}{3}\Bigr).
   \label{eq:Vdot}
 \end{equation}
-A sublevel set $\{V\le c\}$ on which $\dot V<0$ away from the origin is forward invariant and therefore contained in the basin of attraction. Searching outward along rays until $\dot V$ first becomes non-negative, and taking the smallest $V$ at which that occurs, gives the largest such level,
+A sublevel set $\{V\le c\}$ on which $\dot V<0$ away from the origin is forward invariant and therefore contained in the basin of attraction. We search outward along rays for the level at which $\dot V$ first reaches zero, then step back to a level that can be checked directly. Sampling $\dot V$ at $4\times10^5$ points on the boundary of
 \begin{equation}
-  \Omega=\{z:V(z)\le 0.206213\},
+  \Omega=\{z:V(z)\le 0.2059\},
+  \label{eq:lyapset}
 \end{equation}
-which certifies a pure voltage displacement of $0.43466$ from rest. The $+0.05$ displacement used in Section~\ref{sec:runs} has $V=0.002729$ and so lies well inside $\Omega$: its decay follows from \eqref{eq:Vdot} rather than from the simulation. Section~\ref{sec:threshold} measures the true threshold as $0.5555$, so this certificate recovers $78.3\%$ of it. The shortfall is the price of describing a curved separatrix by a quadratic form.
+and on $400$ interior level sets, the largest value found is $-4.05\times10^{-6}$, so $\dot V<0$ throughout $\Omega$ away from the origin. Every trajectory starting in $\Omega$ therefore returns to rest. Along the voltage axis $\Omega$ reaches a displacement of $0.43433$. The $+0.05$ displacement used in Section~\ref{sec:runs} has $V=0.002729$ and so lies well inside $\Omega$: its decay follows from \eqref{eq:Vdot} rather than from the simulation. Section~\ref{sec:threshold} measures the threshold as $0.5555$, so $\Omega$ reaches $78.2\%$ of it along that axis.
+
+Two caveats are worth stating. The level in \eqref{eq:lyapset} is obtained by sampling, not by a closed-form bound, so it is a numerical estimate of the largest certified level rather than a proof that no larger one exists; the margin $-4.05\times10^{-6}$ is small, and a finer search could shave it. And $\Omega$ is an ellipse, while the true basin boundary is curved, so the shortfall against $0.5555$ measures the cost of describing a curved region by a quadratic form, not a gap in the dynamics.
 
 
 \clearpage
@@ -267,7 +268,7 @@ The two zero-current runs differ only in their initial voltage, so excitability 
   \end{tabular}
 \end{table}
 
-A displacement of $0.002$ separates a peak of $-0.3341$ from a peak of $+1.5887$, so the response is effectively discontinuous at this resolution. The threshold lies $0.142$ voltage units to the left of the middle branch of the cubic nullcline. That offset is expected: the dividing surface is the stable manifold of the middle branch, and the branch itself is only its $\varepsilon\to0$ approximation. At $\varepsilon=0.08$ the two differ measurably, which is consistent with the scaling evidence in Section~\ref{sec:scaling}.
+Table~\ref{tab:threshold} reports the threshold measured at $I=0$, with the recovery variable held at its resting value $w_*$ and a peak above $v=1$ taken as the spike criterion. Across the final bisection interval a displacement of $0.002$ separates a peak of $-0.3341$ from one of $+1.5887$, so peak voltage changes sharply over a narrow band of initial conditions. The located threshold sits $0.1424$ voltage units to the \emph{right} of the middle branch of the cubic nullcline at $w=w_*$, which lies at $-0.7863$. The middle branch is the $\varepsilon\to0$ description of the dividing set; at $\varepsilon=0.08$ the measured threshold and that branch differ by a resolvable amount, which is consistent with the scaling evidence in Section~\ref{sec:scaling}. Bisection locates where the spike criterion changes value; it does not by itself establish that the underlying response is discontinuous, nor identify the dividing set.
 
 
 \clearpage
@@ -394,7 +395,9 @@ The slow--fast structure of the model predicts how large that effect should be. 
   \end{tabular}
 \end{table}
 
-The product \(\varepsilon T\) rises steadily from \(2.15\) to \(3.35\), so it has not reached a constant. Fitting \(T\propto\varepsilon^{-\alpha}\) on log--log axes gives \(\alpha=0.909\) over \(\varepsilon\in[0.005,0.02]\) and \(\alpha=0.750\) over \(\varepsilon\in[0.06,0.10]\). The exponent approaches the predicted value of \(1\) as \(\varepsilon\) decreases, which supports the slow--fast explanation, but at \(\varepsilon=0.08\) the asymptotic regime has not been reached: the \(O(1)\) transition time is still a visible fraction of the cycle. The \(32\%\) reduction reported above is therefore a correct measurement taken in a pre-asymptotic regime, and the inverse law should not be quoted as exact at these parameters.
+The product \(\varepsilon T\) rises steadily from \(2.15\) to \(3.35\), so it has not reached a constant over the range tested. Fitting \(T\propto\varepsilon^{-\alpha}\) on log--log axes gives \(\alpha=0.909\) over \(\varepsilon\in[0.005,0.02]\) and \(\alpha=0.750\) over \(\varepsilon\in[0.06,0.10]\). The exponent is larger over the smaller-\(\varepsilon\) window and closer to \(1\) there, and \(\varepsilon T\) varies by only a factor of \(1.6\) while \(T\) itself varies by a factor of \(13\). Both observations are consistent with the slow--fast prediction \(T\sim C/\varepsilon\) holding asymptotically. They do not demonstrate convergence: the sweep stops at \(\varepsilon=0.005\), and over this range the \(O(1)\) transition time remains a visible fraction of the cycle. At \(\varepsilon=0.08\) in particular the asymptotic regime has not been reached, so the \(32\%\) reduction reported above is a correct measurement taken in a pre-asymptotic regime, and the inverse law should not be quoted as exact at these parameters.
+
+The two tables give slightly different periods at \(\varepsilon=0.08\): \(39.475\) in Table~\ref{tab:sensitivity} against \(39.474\) in Table~\ref{tab:scaling}. The runs use different measurement windows and output sampling --- Table~\ref{tab:sensitivity} integrates to time \(450\), samples every \(0.1\) time units and discards crossings before time \(150\), while Table~\ref{tab:scaling} discards the first \(1000\) time units --- so the two averages are taken over different sets of cycles and locate each crossing on a different grid. The difference of \(0.001\) time units, around \(3\times10^{-5}\) of the period, is the size expected from that alone.
 
 
 \input{bonus}
@@ -403,7 +406,7 @@ The product \(\varepsilon T\) rises steadily from \(2.15\) to \(3.35\), so it ha
 
 \section{Conclusion and limitations}
 
-The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew, and a Lyapunov function built from \eqref{eq:lyapP} turned the decay of the small disturbance into a certified statement, guaranteeing return to rest for voltage displacements up to \(0.43466\) against a measured threshold of \(0.5555\). The first Lyapunov coefficient classified both stability crossings as subcritical Hopf bifurcations. The refined runs showed that the initial state can matter near either crossing. At the tested current, increasing the recovery rate shortened the firing period; widening that sweep showed the exponent in \(T\propto\varepsilon^{-\alpha}\) rising from \(0.750\) over the tested range towards the slow--fast prediction of \(1\) as \(\varepsilon\) decreases, so the inverse law holds only asymptotically.
+The FitzHugh--Nagumo model reproduced three distinct responses by changing the initial voltage or the sustained current. Equilibrium and Jacobian calculations explained when small disturbances decayed or grew, and a Lyapunov function built from \eqref{eq:lyapP} turned the decay of the small disturbance into a quantitative statement, giving return to rest for voltage displacements up to \(0.43433\) against a measured threshold of \(0.5555\). The first Lyapunov coefficient classified both stability crossings as subcritical Hopf bifurcations. The refined runs showed that the initial state can matter near either crossing. At the tested current, increasing the recovery rate shortened the firing period; widening that sweep gave a fitted exponent in \(T\propto\varepsilon^{-\alpha}\) of \(0.750\) over the tested range and \(0.909\) over the smallest decade, consistent with the slow--fast prediction \(T\sim C/\varepsilon\) holding asymptotically rather than at these parameters.
 
 The variables are scaled, so comparing the curves to a particular neuron would require calibration against measured voltage, time, and current. The late-time simulations sample selected currents and initial states. A full description of periodic branches and their stability would require additional analysis. The core Jupyter notebook regenerates the simulations and exports the core figures.
 
@@ -411,57 +414,12 @@ In the controlled inverse study, noise increased the held-out error for both met
 
 \subsection*{Reproducibility}
 
-The core notebook derives and evaluates \eqref{eq:hopf-coefficient}, regenerates the current-sweep figure, and reproduces the threshold of Table~\ref{tab:threshold}, the Lyapunov certificate of Section~\ref{sec:lyapunov} and the scaling table of Table~\ref{tab:scaling} in its sections 11--13. The executed bonus notebook (\texttt{fhn\_pinn\_ml.ipynb}) contains both benchmarks. The controlled Colab CPU run used PyTorch 2.14.1, SymPy 1.14.0, SciPy 1.16.3, and Matplotlib 3.10.0. Step~12 uses observation seeds 2026--2030 and network seed 7. Its export contains all 24 rows in \texttt{pinn\_controlled\_trials.csv}, the summary table, and the figure in PDF and EPS.
-
-\section*{Contributions}
-\addcontentsline{toc}{section}{Contributions}
-
-Every member can present and defend the items listed against their name, including the
-corresponding notebook cells.
-
-\begin{table}[H]
-  \centering
-  \small
-  \begin{tabular}{@{}p{0.235\linewidth}p{0.70\linewidth}@{}}
-    \toprule
-    Member & Responsible for\\
-    \midrule
-    \memberA\ \scriptsize(\idA) & \normalsize Model formulation: reduction to two variables, the
-      assumptions of Section~2, the nullclines \eqref{eq:nullclines}, and the proof that the
-      equilibrium \eqref{eq:equilibrium} is unique at every current. Notebook sections 1--2.\\[0.3em]
-    \memberB\ \scriptsize(\idB) & \normalsize Linear stability: the Jacobian, the trace--determinant
-      identities \eqref{eq:trace-det}, the eigenvalue classification of
-      Table~\ref{tab:stability}, and the perturbation checks against it. Notebook section 7.\\[0.3em]
-    \memberC\ \scriptsize(\idC) & \normalsize Bifurcation analysis: the Hopf locus \eqref{eq:hopf},
-      transversality, and the derivation of the first Lyapunov coefficient
-      \eqref{eq:hopf-coefficient} classifying both crossings as subcritical.
-      Notebook section 8.\\[0.3em]
-    \memberD\ \scriptsize(\idD) & \normalsize Simulation and numerical verification: solver and
-      tolerance selection, the convergence study, the spike-counting rule, the current sweep of
-      Figure~\ref{fig:sweep}, and the bistability runs of Table~\ref{tab:refined}.
-      Notebook sections 3--6, 9.\\[0.3em]
-    \memberE\ \scriptsize(\idE) & \normalsize Quantitative extensions: the firing threshold of
-      Section~\ref{sec:threshold}, the Lyapunov certificate of Section~\ref{sec:lyapunov}, and the
-      period-scaling study of Section~\ref{sec:scaling}. Notebook sections 10--13.\\[0.3em]
-    \memberF\ \scriptsize(\idF) & \normalsize Bonus study: the PINN architecture, loss and training
-      schedule, the least-squares baseline, the controlled paired experiment of
-      Section~\ref{sec:controlled}, and the interpretation in Section~\ref{sec:bonus-value}.
-      Bonus notebook throughout.\\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\subsection*{Acknowledgment of AI tool use}
-
-ChatGPT assisted with topic planning and with the design of the bonus experiment. OpenAI Codex
-assisted with drafting and organising both notebooks, commenting the code, checking numerical
-results and notebook execution, drafting this report, and verifying its compilation. All
-derivations were checked by the authors, and every numerical claim in this report is reproduced by
-the accompanying notebooks.
+The core notebook derives and evaluates \eqref{eq:hopf-coefficient}, regenerates the current-sweep figure, and reproduces the threshold of Table~\ref{tab:threshold}, the Lyapunov analysis of Section~\ref{sec:lyapunov} and the scaling table of Table~\ref{tab:scaling} in its sections 11--13. The executed bonus notebook (\texttt{fhn\_pinn\_ml.ipynb}) contains both benchmarks. The controlled Colab CPU run used PyTorch 2.14.1, SymPy 1.14.0, SciPy 1.16.3, and Matplotlib 3.10.0. Step~12 uses observation seeds 2026--2030 and network seed 7. Its export contains all 24 rows in \texttt{pinn\_controlled\_trials.csv}, the summary table, and the figure in PDF and EPS.
 
 \begingroup
-\small
+\footnotesize
 \setlength{\parskip}{0pt}
+\setlength{\bibsep}{0.1em}
 \bibliographystyle{unsrt}
 \bibliography{references}
 \endgroup

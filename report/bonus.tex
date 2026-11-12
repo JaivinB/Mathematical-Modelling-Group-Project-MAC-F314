@@ -9,18 +9,16 @@ reverses it. Given only noisy voltage readings, and treating the recovery variab
 unobservable --- which it is in any real recording --- can the model's parameter be recovered?
 
 We answer it twice, with a physics-informed neural network and with a classical least-squares fit,
-and we state the expected outcome in advance. The least-squares baseline is supplied with the
-exact data-generating equations, the exact initial state \emph{including} the unmeasurable
-\(w_0\), and a single scalar to search, with the true model integrated at every trial value. Under
-a correctly specified model that is the statistically efficient estimator. It should win, and it
-does.
+and we state the expected outcome in advance. Both methods are given the same governing equations
+and the same initial state, including the unmeasurable \(w_0\). The least-squares baseline has only
+a single scalar to search, with the true model integrated at every trial value, so on this
+synthetic problem it is the stronger of the two by construction. It should win, and it does.
 
-The comparison is therefore not a contest but a \textbf{calibration}: it measures how close a
-network that must simultaneously learn two state trajectories comes to the floor set by an
-estimator that already knows them. A PINN landing within a small factor of that floor is evidence
-that the implementation is correct, and it is the only way to interpret a PINN result on a problem
-whose exact solution is available. Section~\ref{sec:bonus-value} returns to the regimes in which
-the baseline's assumptions fail and the network is the only option.
+The comparison is therefore not a contest but a \textbf{benchmark}: least squares is the empirical
+reference point for this experiment, and the quantity of interest is how close a network that must
+simultaneously learn two state trajectories comes to it. A PINN landing within a small factor of
+that reference is evidence that the implementation is correct. Section~\ref{sec:bonus-value}
+returns to the assumptions the baseline relies on and to the settings in which they would not hold.
 
 \subsection{Inverse problem and synthetic data}
 
@@ -171,38 +169,42 @@ These comparisons summarize five realizations of one noise level. They show perf
       count on the held-out run.\\[0.35em]
     Controlled experiment &
       The first benchmark confounded noise with sample count. Section~\ref{sec:controlled}
-      replaces it with a paired design: two densities \(\times\) \{clean, noisy\} \(\times\) five
-      noise seeds, sparse readings copied from the dense ones at shared times, one fixed network
-      initialisation. Twenty-four fits, reported in full.\\[0.35em]
+      replaces it with a paired design: two clean datasets and ten noisy ones (two densities
+      \(\times\) five noise seeds), sparse readings copied from the dense ones at shared times,
+      one fixed network initialisation. Each of the twelve datasets is fitted by both methods,
+      giving twenty-four fits, reported in full.\\[0.35em]
     Interpretation &
       The negative result is explained rather than reported: the baseline is identified as the
-      efficiency bound, so the PINN's distance from it is the quantity of interest.\\
+      empirical reference for this synthetic experiment, so the PINN's distance from it is
+      the quantity of interest.\\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\paragraph{Where the network would be the only option.}
-Least squares over an ODE solver requires the model to be correct, the initial state to be known,
-and the unknowns to be finitely many scalars. Each of those can fail:
+\paragraph{Proposed follow-up experiments.}
+The baseline's advantage here rests on three assumptions: the model is correct, the initial state
+is known, and the unknowns are finitely many scalars. Each can be relaxed, and doing so is the
+natural continuation of this study. We have not run these experiments; we set them out as the
+tests that would determine whether the ordering above survives.
 
 \begin{itemize}[leftmargin=1.4em]
   \item \textbf{Unknown forcing.} If \(I(t)\) is an unknown \emph{function} rather than a
-        constant, a second network head estimates it pointwise. The baseline would first have to
-        assume a parametric form, which is the assumption under test.
-  \item \textbf{Unknown initial state.} Here both methods were given \(w_0\). In a recording it is
-        unobservable, and the baseline's advantage narrows to the extent that it must search over
-        it too.
-  \item \textbf{Model misspecification.} The baseline inherits a wrong right-hand side rigidly;
-        the network's data term lets the fit depart from it, and the size of the physics residual
-        then \emph{diagnoses} the misspecification.
+        constant, a second network head could estimate it pointwise, whereas the baseline would
+        first have to assume a parametric form. Whether that changes the ordering is untested.
+  \item \textbf{Unknown initial state.} Here both methods were given \(w_0\). In a recording it
+        is unobservable, and the baseline would have to search over it too. The experiment is to
+        withhold \(w_0\) from both and re-measure the gap.
+  \item \textbf{Model misspecification.} With a deliberately wrong right-hand side, the question
+        is whether the network's physics residual grows in a way that diagnoses the error while
+        the baseline absorbs it into the fitted parameter.
   \item \textbf{Expensive forward solves.} For a spatially extended version of these equations,
-        re-integrating a PDE inside an optimiser at every trial parameter becomes the bottleneck
-        that the collocation formulation avoids.
+        the cost of re-integrating a PDE inside the optimiser at every trial parameter would need
+        to be compared against the cost of the collocation formulation.
 \end{itemize}
 
 \paragraph{Limitations, stated plainly.}
-All observations are synthetic. That is deliberate --- it is the only way to know the true
-parameter and therefore to measure error rather than merely report a fit --- but it means the
+All observations are synthetic. That is deliberate --- the true
+parameter is known only for synthetic data and therefore to measure error rather than merely report a fit --- but it means the
 study demonstrates method behaviour, not biological fidelity. It uses one noise level, five noise
 realisations, one network initialisation and one unknown parameter. Fitting a published
 patch-clamp recording, estimating several parameters jointly, and sweeping the noise level to look

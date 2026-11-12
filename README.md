@@ -26,7 +26,7 @@ The variables and time are expressed in scaled model units.
 2. **Repeated firing and stability.** At sustained current `I = 0.50`, the model fires repeatedly. We use phase portraits, nullclines, and the Jacobian to explain how this relates to the stability of the equilibrium.
 3. **Transitions and sensitivity.** Two subcritical Hopf bifurcations occur near `I = 0.331281` and `I = 1.418719`. The first Lyapunov coefficient is positive at both crossings, so the small periodic orbit near each crossing is unstable and lies on the locally stable side of the equilibrium. At `I = 0.50`, increasing `ε` from `0.06` to `0.10` shortens the mean firing period from `49.157` to `33.525` model time units.
 
-4. **How sharp the threshold is, and how far we can prove it.** Bisecting on the initial voltage puts the firing threshold at a displacement of `0.5555` from rest, i.e. `v = -0.6439` — `0.142` units left of the middle branch of the cubic nullcline, because the true dividing surface is that branch's stable manifold. Solving the Lyapunov matrix equation `A'P + PA = -I` at the resting state and taking the largest sublevel set on which `V` still decreases for the *full nonlinear* system certifies return to rest for displacements up to `0.43466`, which is `78.3%` of the measured threshold.
+4. **How sharp the threshold is, and how far we can prove it.** Measured at zero current, with recovery held at its resting value and a peak above `v = 1` as the spike criterion, bisecting on the initial voltage puts the firing threshold at a displacement of `0.5555` from rest, i.e. `v = -0.6439`. That is `0.1424` units to the *right* of the middle-nullcline value `-0.7863`. Runs on either side of it differ sharply in peak voltage. Solving the Lyapunov matrix equation `A'P + PA = -I` at the resting state and taking a sublevel set on which `V` still decreases for the *full nonlinear* system gives return to rest for displacements up to `0.43433`, which is `78.2%` of the measured threshold.
 5. **How the period scales.** Widening the recovery sweep to `eps` in `[0.005, 0.10]` gives a fitted exponent of `0.909` in `T ~ eps^-a` at the small end but only `0.750` over `[0.06, 0.10]`. The slow–fast argument predicts `1` in the singular limit, so the `32%` drop reported above is a correct measurement taken before that regime begins.
 
 The [analysis notebook](fhn_project.ipynb) contains the derivations, simulations, and figures. Sections 11–13 cover the threshold, the Lyapunov certificate and the scaling study; every number quoted above is printed by a cell there.
@@ -57,13 +57,6 @@ Least squares gave lower parameter and held-out voltage errors in **all 10 noisy
 
 The [trial CSV](report/pinn_controlled_trials.csv) contains all 24 results. The [LaTeX source](report/main.tex) includes the [bonus analysis](report/bonus.tex), [result table](report/pinn_controlled_results.tex), and [references](report/references.bib). The [figure folder](report/figures) contains seven figures in PDF and EPS.
 
-## Who did what
-
-The report carries a contributions table naming all six members against the sections and notebook
-cells each is responsible for, as the assessment requires. Group member names and IDs are set once
-via the `\memberA`–`\memberF` macros at the top of [report/main.tex](report/main.tex) and are read
-by both the title block and the contributions table.
-
 ## AI acknowledgment
 
-This acknowledgment also appears in the report itself. ChatGPT assisted with topic planning and the design of the bonus experiment. OpenAI Codex assisted with drafting and organizing both notebooks, commenting the code, checking numerical results and notebook execution, drafting the LaTeX report, and verifying its compilation.
+ChatGPT assisted with topic planning and the design of the bonus experiment. OpenAI Codex assisted with drafting and organizing both notebooks, commenting the code, checking numerical results and notebook execution, drafting the LaTeX report, and verifying its compilation.
